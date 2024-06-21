@@ -21,8 +21,14 @@ function authenticateToken(req, res, next) {
 async function runPythonScript(inputData) {
     return new Promise((resolve, reject) => {
         const scriptPath = path.join(__dirname, '../../scripts/predict.py');
-        const inputFilePath = path.join('/tmp', 'input.json');
-        const outputFilePath = path.join('/tmp', 'output.json');
+        const tmpDir = path.join(__dirname, '../../tmp');
+        const inputFilePath = path.join(tmpDir, 'input.json');
+        const outputFilePath = path.join(tmpDir, 'output.json');
+
+        // Buat direktori /tmp jika belum ada
+        if (!fs.existsSync(tmpDir)) {
+            fs.mkdirSync(tmpDir);
+        }
 
         // Simpan inputData ke file input.json
         fs.writeFileSync(inputFilePath, JSON.stringify({ sentences: inputData }), { encoding: 'utf-8' });
@@ -42,7 +48,9 @@ async function runPythonScript(inputData) {
             }
         };
 
-        execFile('python3', [scriptPath, inputFilePath, outputFilePath], options, (error, stdout, stderr) => {
+        const pythonExecutable = process.platform === 'win32' ? 'python' : 'python3';
+        
+        execFile(pythonExecutable, [scriptPath, inputFilePath, outputFilePath], options, (error, stdout, stderr) => {
             if (error) {
                 console.error('Error executing script:', error);
                 console.error('Stderr:', stderr);

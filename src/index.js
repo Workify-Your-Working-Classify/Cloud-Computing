@@ -21,7 +21,7 @@ app.use('/', routes);
 app.use('/api', userRoutes);
 
 // Gunakan rute dari routes/articleRoute.js
-app.use('/api/article', articleRoutes);
+app.use('/api', articleRoutes);
 
 // Tambahkan middleware auth ke endpoint /api/predict
 app.post('/api/predict', authenticate, modelController.processRequest); // Pastikan middleware diterapkan

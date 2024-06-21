@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, getUser, logoutUser, generateToken, addKegiatan } = require('../controllers/userController');
+const { registerUser, loginUser, getUser, logoutUser, generateToken, addKegiatan, getKegiatan } = require('../controllers/userController');
 
 // Rute untuk mendaftarkan pengguna baru
 router.post('/register', registerUser);
@@ -19,5 +19,7 @@ router.post('/generate-token', generateToken);
 
 // Rute untuk menambahkan kegiatan ke subkoleksi dalam pengguna
 router.post('/user/:uid/kegiatan', addKegiatan);
+
+router.get('/user/:uid/kegiatan', getKegiatan);
 
 module.exports = router;

@@ -25,4 +25,21 @@ async function addArticle(req, res) {
   }
 }
 
-module.exports = { addArticle };
+// Fungsi untuk mendapatkan daftar artikel
+async function getArticle(req, res) {
+  try {
+    const articlesSnapshot = await db.collection('Article').get();
+    if (articlesSnapshot.empty) {
+      res.status(404).send({ message: 'No articles found' });
+      return;
+    }
+
+    const articlesList = articlesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).send(articlesList);
+  } catch (error) {
+    console.error('Error getting articles:', error);
+    res.status(500).send({ error: 'Error getting articles' });
+  }
+}
+
+module.exports = { addArticle, getArticle };

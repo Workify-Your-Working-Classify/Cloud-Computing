@@ -35,7 +35,7 @@ async function loginUser(req, res) {
     }
 
     const token = jwt.sign({ uid: user.uid }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).send({ message: 'User logged in successfully', uid: user, token: token });
+    res.status(200).send({ message: 'User logged in successfully', user: user, token: token });
   } catch (error) {
     console.error('Error logging in user:', error.message);
     res.status(500).send({ error: 'Error logging in user', message: error.message });
@@ -78,6 +78,7 @@ async function generateToken(req, res) {
 }
 
 // Fungsi untuk menambahkan kegiatan
+// Fungsi untuk menambahkan kegiatan
 async function addKegiatan(req, res) {
   const userId = req.params.uid;
   console.log('Received userId:', userId); // Log untuk debugging
@@ -101,9 +102,9 @@ async function addKegiatan(req, res) {
     }
 
     // Dapatkan hasil prediksi dari model
-    console.log('Deskripsi:', Deskripsi); // Log untuk debugging
+    console.log('namaKegiatan:', namaKegiatan); // Log untuk debugging
 
-    const prediksi = await runPythonScript([Deskripsi])
+    const prediksi = await runPythonScript([namaKegiatan])
 
     console.log('Prediction result:', prediksi); // Log untuk debugging
 
@@ -159,11 +160,33 @@ async function addKegiatan(req, res) {
   }
 }
 
+
+// Fungsi untuk mendapatkan kegiatan
+async function getKegiatan(req, res) {
+  const userId = req.params.uid;
+  console.log('Received userId:', userId); // Log untuk debugging
+
+  try {
+    const kegiatanSnapshot = await db.collection('users').doc(userId).collection('Kegiatan').get();
+    if (kegiatanSnapshot.empty) {
+      res.status(404).send({ message: 'No kegiatan found' });
+      return;
+    }
+
+    const kegiatanList = kegiatanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).send(kegiatanList);
+  } catch (error) {
+    console.error('Error getting kegiatan:', error);
+    res.status(500).send({ error: 'Error getting kegiatan', details: error.message });
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
   getUser,
   logoutUser,
   generateToken,
-  addKegiatan
+  addKegiatan,
+  getKegiatan
 };
