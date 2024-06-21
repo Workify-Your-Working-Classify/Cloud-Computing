@@ -1,0 +1,12 @@
+runtime: custom
+env: flex
+
+env_variables:
+  FIREBASE_PROJECT_ID: "workify-426005"
+  GOOGLE_APPLICATION_CREDENTIALS: "firebase/workify-426005-firebase-adminsdk-zno5h-4cd5ee305f.json"
+
+handlers:
+  - url: /.*
+    script: auto
+
+entrypoint: node src/index.js
